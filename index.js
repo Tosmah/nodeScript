@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 const program = require('commander')
 const inquirer = require('inquirer')
+const http = require('http')
+const qs = require('querystring')
+const db = require('sqlite')
+
 
  program
  .version('1.0.0')
@@ -9,121 +13,152 @@ const inquirer = require('inquirer')
 
 program.parse(process.argv)
 
-function QuizzCultureG() {
-	if (program.Culture) {
- 	inquirer.prompt([
- 		{
- 			type: 'input',
- 			message: 'Entrez votre nom d\'utilisateur',
- 			name: 'username'
- 		}, {
- 			type: 'checkbox',
- 			message: 'Laquelle de ces inventions a été créé en premier ?',
- 			name: 'Q1',
- 			choices: [
- 				'Dynamite',
- 				'Electricite',
- 				'Ma bite'
- 			]
- 		}, {
- 			type: 'checkbox',
- 			message: 'Parmi ces reponses, laquelle n\'est pas une couleur primaire ?',
- 			name: 'Q2',
- 			choices: [
- 				'Jaune',
- 				'Orange',
- 				'Bleu'
- 			]
- 		}, {
- 			type: 'checkbox',
- 			message: 'Quelle est la capitale du Danemark ?',
- 			name: 'Q3',
- 			choices: [
- 				'Copenhague',
- 				'Helsinki',
- 				'Stockholm'
- 			]
- 		}, {
- 			type: 'checkbox',
- 			message: 'Qui était Claude Lévi-Strauss ?',
- 			name: 'Q4',
- 			choices: [
- 				'Un fabriquant de pantalon pour mineurs américains',
- 				'Un philosophe et membre de l\'académie française',
- 				'Un prestigieux joaillier'
- 			]
- 		}, {
- 			type: 'checkbox',
- 			message: 'Quelle pays ne possède pas d\'armes nucléaires ?',
- 			name: 'Q5',
- 			choices: [
- 				'Inde',
- 				'Espagne',
- 				'France'
- 			]
- 		}, {
- 			type: 'checkbox',
- 			message: 'Quelle équipe a remporté la Coupe du Monde de football en Allemagne 2006 ?',
- 			name: 'Q6',
- 			choices: [
- 				'Espagne',
- 				'Brésil',
- 				'Italie'
- 			]
- 		}, {
- 			type: 'checkbox',
- 			message: 'Qui est le peintre de "La nuit étoilée" ?',
- 			name: 'Q7',
- 			choices: [
- 				'Edvard Munch',
- 				'Vincent Van Gogh',
- 				'Leonardo da Vinci'
- 			]
- 		}, {
- 			type: 'checkbox',
- 			message: 'Quel est le roman le plus célèbre de Marcel Proust ?',
- 			name: 'Q8',
- 			choices: [
- 				'A la recherche du temps perdu',
- 				'Bonjour tristesse',
- 				'La dame aux camélias'
- 			]
- 		}, {
- 			type: 'checkbox',
- 			message: 'Quelle est la ville la plus peuplée du monde ?',
- 			name: 'Q9',
- 			choices: [
- 				'Buenos Aires',
- 				'New York',
- 				'Tokyo'
- 			]
- 		}, {
- 			type: 'checkbox',
- 			message: 'Quelle est la date de la création de l\'Union européenne ?',
- 			name: 'Q10',
- 			choices: [
- 				'08 mai 1945',
- 				'1 novembre 1993',
- 				'1 janvier 1999'
- 			]
- 		}
-	]).then((answers) => {
-		score = 0;
-		If (answers.Q1 == 'Dynamite') {
-			score = 1;
-		} else {
-			score = 0
-		}
-		console.log(score);
-	})
- } else {
- 	program.help()
- }
+function runQuizzes(program){
+	if(program.Culture){
+		QuizzCultureG()
+	}
+	else if(program.QI){
+		QuizzQI()
+	}
+	else {
+		program.help()
+	}
 }
+function QuizzCultureG() {
+		inquirer.prompt([
+		{
+			type: 'input',
+			message: 'Entrez votre nom d\'utilisateur',
+			name: 'username'
+		}, {
+			type: 'checkbox',
+			message: 'Laquelle de ces inventions a été créé en premier ?',
+			name: 'Q1',
+			choices: [
+			'Dynamite',
+			'Electricite',
+			'Ma bite'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Parmi ces reponses, laquelle n\'est pas une couleur primaire ?',
+			name: 'Q2',
+			choices: [
+			'Jaune',
+			'Orange',
+			'Bleu'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la capitale du Danemark ?',
+			name: 'Q3',
+			choices: [
+			'Copenhague',
+			'Helsinki',
+			'Stockholm'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Qui était Claude Lévi-Strauss ?',
+			name: 'Q4',
+			choices: [
+			'Un fabriquant de pantalon pour mineurs américains',
+			'Un philosophe et membre de l\'académie française',
+			'Un prestigieux joaillier'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle pays ne possède pas d\'armes nucléaires ?',
+			name: 'Q5',
+			choices: [
+			'Inde',
+			'Espagne',
+			'France'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle équipe a remporté la Coupe du Monde de football en Allemagne 2006 ?',
+			name: 'Q6',
+			choices: [
+			'Espagne',
+			'Brésil',
+			'Italie'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Qui est le peintre de "La nuit étoilée" ?',
+			name: 'Q7',
+			choices: [
+			'Edvard Munch',
+			'Vincent Van Gogh',
+			'Leonardo da Vinci'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quel est le roman le plus célèbre de Marcel Proust ?',
+			name: 'Q8',
+			choices: [
+			'A la recherche du temps perdu',
+			'Bonjour tristesse',
+			'La dame aux camélias'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la ville la plus peuplée du monde ?',
+			name: 'Q9',
+			choices: [
+			'Buenos Aires',
+			'New York',
+			'Tokyo'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la date de la création de l\'Union européenne ?',
+			name: 'Q10',
+			choices: [
+			'08 mai 1945',
+			'1 novembre 1993',
+			'1 janvier 1999'
+			]
+		}
+		]).then((answers) => {
+			var titre = 'QuizzCultureG';
+			var score = 0;
+			if (answers.Q1 == 'Dynamite')
+				score++;
+			if(answers.Q2 == 'Orange')
+				score++;
+			if(answers.Q3 == 'Copenhague')
+				score++;
+			if (answers.Q4 == 'Un philosophe et membre de l\'académie française')
+				score++;
+			if(answers.Q5 == 'Espagne')
+				score++;
+			if(answers.Q6 == 'Italie')
+				score++;
+			if (answers.Q7 == 'Vincent Van Gogh')
+				score++;
+			if(answers.Q8 == 'A la recherche du temps perdu')
+				score++;
+			if(answers.Q9 == 'Tokyo')
+				score++;
+			if(answers.Q10 == '1 novembre 1993')
+				score++;
+
+			if(score<=3){
+				console.log("Bof "+answers.username+" ! Tu n'as que "+score+"/10")
+			}
+			else if (score<=7){
+				console.log("Pas mal "+answers.username+" ! Tu as "+score+"/10")
+			}
+			else {
+				console.log("Excellent "+answers.username+" ! Tu as "+score+"/10")
+			}
+		})
+	} 
 
 
 function QuizzQI () {
-	if (program.QI) {
  	inquirer.prompt([
  		{
  			type: 'input',
@@ -225,14 +260,84 @@ function QuizzQI () {
  				'9'
  			]
  		}
-	]).then((answers2) => {
-		console.log(answers2)
+	]).then((answers) => {
+			var titre = 'QuizzQI'
+			var score = 0;
+			if (answers.Q1 == 'Raler')
+				score++;
+			if(answers.Q2 == 'Lisa')
+				score++;
+			if(answers.Q3 == '5')
+				score++;
+			if (answers.Q4 == 'Nuit - Déjeuner')
+				score++;
+			if(answers.Q5 == '40 euros')
+				score++;
+			if(answers.Q6 == 'Bois - Verre')
+				score++;
+			if (answers.Q7 == 'Ra')
+				score++;
+			if(answers.Q8 == '80 km/heure')
+				score++;
+			if(answers.Q9 == 'faussaire')
+				score++;
+			if (answers.Q10 == '4')
+				score++;
+
+			if(score<=3){
+				console.log("Bof "+answers.username+" ! Tu n'as que "+score+"/10")
+			}
+			else if (score<=7){
+				console.log("Pas mal "+answers.username+" ! Tu as "+score+"/10")
+			}
+			else {
+				console.log("Excellent "+answers.username+" ! Tu as "+score+"/10")
+			}
+		})
+	}
+
+
+db.open('quizz.db').then(() => {
+	return db.run("CREATE TABLE IF NOT EXISTS quizz (titre, username, Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, score, date)") 
+})
+
+http.createServer((req, res) => {
+
+	res.writeHead(200, {'Content-Type': 'text/html'})
+
+	res.write(`
+	 <html>
+ 		<body>
+			 <h1>Quizz</h1>
+	 	</body>
+	 </html>`)
+
+	req.on('end', () => {
+		today = new Date()
+		maDate = today.toISOString().replace(/T/, ' ').replace(/\..+/, '')
+		insert(answers)
+		afficher(res)
 	})
- } else {
- 	program.help()
- }
-}
+
+	function insert(answers) {
+		db.run("INSERT INTO comments VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", answers.titre, answers.username, answers.Q1, answers.Q2, answers.Q3, answers.Q4, answers.Q5, answers.Q6, answers.Q7, answers.Q8, answers.Q9, answers.Q10, answers.score, maDate)
+	}
+
+	function afficher(res) {
+		return db.all("SELECT * FROM quizz").then((result)=>{
+			var infotab = ''
+			result.forEach(function(index){
+				infotab += "<p>" + index.titre + " : " + index.username + " le " + maDate + " a eu un score de " + index.score + "</p>"
+			})
+			return infotab
+		}).then((mavar)=> {
+			res.write(mavar)
+			res.end()
+		})
+	}
 
 
-QuizzCultureG();
-QuizzQI();
+}).listen(8080)
+
+
+runQuizzes(program);

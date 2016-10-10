@@ -1,12 +1,20 @@
 {
-  "name": "njs-302",
+  "name": "tpnode",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "bin": {
-  	"mycommand": "./index.js"
-  }
+    "quizz": "./index.js"
+  },
+  "dependencies": {
+    "commander": "^2.9.0",
+    "inquirer": "^1.2.1",
+    "sqlite": "^2.2.0"
+  },
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
