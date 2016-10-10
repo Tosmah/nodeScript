@@ -5,6 +5,9 @@ const http = require('http')
 const qs = require('querystring')
 const db = require('sqlite')
 
+db.open('quizz.db').then(() => {
+	return db.run("CREATE TABLE IF NOT EXISTS quizz (titre, username, Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, score, date)") 
+})
 
  program
  .version('1.0.0')
@@ -159,6 +162,9 @@ function QuizzCultureG() {
 			else {
 				console.log("Excellent "+answers.username+" ! Tu as "+score+"/10")
 			}
+			answers.titre = titre;
+			answers.score = score;
+			insert(answers);
 	})
 } 
 
@@ -299,6 +305,9 @@ function QuizzQI () {
 			else {
 				console.log("Excellent "+answers.username+" ! Tu as "+score+"/10")
 			}
+			answers.titre = titre;
+			answers.score = score;
+			insert(answers);
 	})
 }
 
@@ -433,15 +442,19 @@ function QuizzCapitale() {
 			else {
 				console.log("Excellent "+answers.username+" ! Tu as "+score+"/10")
 			}
+			answers.titre = titre;
+			answers.score = score;
+			insert(answers);
 	})
 }
 
 
+function insert(answers) {
+	today = new Date()
+	maDate = today.toISOString().replace(/T/, ' ').replace(/\..+/, '')
+	db.run("INSERT INTO quizz VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", answers.titre, answers.username, answers.Q1, answers.Q2, answers.Q3, answers.Q4, answers.Q5, answers.Q6, answers.Q7, answers.Q8, answers.Q9, answers.Q10, answers.score, maDate)
+}
 
-
-db.open('quizz.db').then(() => {
-	return db.run("CREATE TABLE IF NOT EXISTS quizz (titre, username, Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, score, date)") 
-})
 
 http.createServer((req, res) => {
 
@@ -463,28 +476,18 @@ http.createServer((req, res) => {
 			 <h1>Score des quizz : </h1>
  	`)
 
-	req.on('end', () => {
-		today = new Date()
-		maDate = today.toISOString().replace(/T/, ' ').replace(/\..+/, '')
-		insert(answers)
-		afficher()
-	})
-
-	function insert(answers) {
-		db.run("INSERT INTO comments VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", answers.titre, answers.username, answers.Q1, answers.Q2, answers.Q3, answers.Q4, answers.Q5, answers.Q6, answers.Q7, answers.Q8, answers.Q9, answers.Q10, answers.score, maDate)
-	}
+	afficher()
 
 	function afficher() {
-		return db.all("SELECT * FROM quizz").then((result)=>{
+		return db.all("SELECT * FROM quizz ORDER BY score").then((result)=>{
 			var infotab = ''
 			result.forEach(function(index){
-				infotab += "<p>" + index.titre + " : " + index.username + " le " + maDate + " a eu un score de " + index.score + "/10 </p>"
+				infotab += "<p>" + index.titre + " : " + index.username + " le " + index.date + " a eu un score de " + index.score + "/10 </p>"
 			})
 			return infotab
 		}).then((infotab)=> {
-			console.log(infotab)
 			res.write(infotab)
-			res.write(`Etzet</body>
+			res.write(`</body>
 	 </html>`)
 			res.end()
 		})
