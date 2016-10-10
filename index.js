@@ -4,6 +4,7 @@ const inquirer = require('inquirer')
 const http = require('http')
 const qs = require('querystring')
 const db = require('sqlite')
+const fs = require ('fs')
 
 db.open('quizz.db').then(() => {
 	return db.run("CREATE TABLE IF NOT EXISTS quizz (titre, username, Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, score, date)") 
@@ -14,22 +15,51 @@ db.open('quizz.db').then(() => {
  .option('-q, --QI', 'Faire le Test de QI')
  .option('-g, --Culture', 'Faire le Test de Culture Général')
  .option('-c, --Capitale', 'Faire le Test des Capitales')
+ .option('-s, --Save', 'Sauvegarder les scores')
 
 program.parse(process.argv)
 
 function runQuizzes(program){
-	if(program.Culture){
+	if (program.Culture){
 		QuizzCultureG()
 	}
-	else if(program.QI){
+	else if (program.QI){
 		QuizzQI()
 	}
-	else if(program.Capitale){
+	else if (program.Capitale){
 		QuizzCapitale()
+	}
+	else if (program.Save){
+		Save()
 	}
 	else {
 		program.help()
 	}
+}
+
+function Save() {
+	inquirer.prompt([
+	{
+        type: 'checkbox',
+        message: 'Voulez vous sauvegarder les scores sur votre ordinateur ?',
+        name: 'Save',
+        choices : [
+            'Oui',
+            'Non'
+        ]
+	}
+	]).then((response) => {
+	    if (response.Save == "Oui") {
+	        try {
+	            fs.writeFile('message.txt', sauvegarder(), (err) => {
+	                if (err) throw err
+	                console.log('Fichier écrit')
+	            })
+	        } catch (err) {
+	            console.error('ERR > ', err)
+	        }
+	    }
+	})
 }
 
 function QuizzCultureG() {
@@ -455,6 +485,15 @@ function insert(answers) {
 	db.run("INSERT INTO quizz VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", answers.titre, answers.username, answers.Q1, answers.Q2, answers.Q3, answers.Q4, answers.Q5, answers.Q6, answers.Q7, answers.Q8, answers.Q9, answers.Q10, answers.score, maDate)
 }
 
+function sauvegarder() {
+	return db.all("SELECT * FROM quizz ORDER BY titre, score DESC").then((result)=>{
+			var infotab = ''
+			result.forEach(function(index){
+				infotab += index.titre + " : " + index.username + " le \'" + index.date + "\' a eu un score de " + index.score + "/10"
+			})
+			return infotab
+		})
+}
 
 http.createServer((req, res) => {
 
