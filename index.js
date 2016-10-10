@@ -50,15 +50,22 @@ function Save() {
 	}
 	]).then((response) => {
 	    if (response.Save == "Oui") {
-	        try {
-	            fs.writeFile('message.txt', sauvegarder(), (err) => {
-	                if (err) throw err
-	                console.log('Fichier écrit')
-	            })
-	        } catch (err) {
-	            console.error('ERR > ', err)
-	        }
-	    }
+	    	db.all("SELECT * FROM quizz ORDER BY titre, score DESC").then((result)=>{
+	    		try {
+		            fs.writeFile('scores.txt', 'Tableau des scores : \n\n', (err) => {
+		                if (err) throw err
+		            })
+		            result.forEach(function(index){
+		            	fs.appendFile('scores.txt', index.titre + " : " + index.username + " le \'" + index.date + "\' a eu un score de " + index.score + "/10 \n\n", (err) => {
+		            		if (err) throw err
+		            	})
+					})
+					console.log('Fichier écrit')
+		        } catch (err) {
+		            console.error('ERR > ', err)
+		        }
+			})
+		}
 	})
 }
 
@@ -485,16 +492,6 @@ function insert(answers) {
 	db.run("INSERT INTO quizz VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", answers.titre, answers.username, answers.Q1, answers.Q2, answers.Q3, answers.Q4, answers.Q5, answers.Q6, answers.Q7, answers.Q8, answers.Q9, answers.Q10, answers.score, maDate)
 }
 
-function sauvegarder() {
-	return db.all("SELECT * FROM quizz ORDER BY titre, score DESC").then((result)=>{
-			var infotab = ''
-			result.forEach(function(index){
-				infotab += index.titre + " : " + index.username + " le \'" + index.date + "\' a eu un score de " + index.score + "/10"
-			})
-			return infotab
-		})
-}
-
 http.createServer((req, res) => {
 
 	res.writeHead(200, {'Content-Type': 'text/html'})
@@ -541,4 +538,4 @@ http.createServer((req, res) => {
 }).listen(8080)
 
 
-runQuizzes(program);
+runQuizzes(program)
