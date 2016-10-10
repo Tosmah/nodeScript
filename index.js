@@ -8,8 +8,9 @@ const db = require('sqlite')
 
  program
  .version('1.0.0')
- .option('-q, --QI', 'Show Test QI')
- .option('-g, --Culture', 'Show Test Culture Général')
+ .option('-q, --QI', 'Faire le Test de QI')
+ .option('-g, --Culture', 'Faire le Test de Culture Général')
+ .option('-c, --Capitale', 'Faire le Test des Capitales')
 
 program.parse(process.argv)
 
@@ -20,12 +21,16 @@ function runQuizzes(program){
 	else if(program.QI){
 		QuizzQI()
 	}
+	else if(program.Capitale){
+		QuizzCapitale()
+	}
 	else {
 		program.help()
 	}
 }
+
 function QuizzCultureG() {
-		inquirer.prompt([
+	inquirer.prompt([
 		{
 			type: 'input',
 			message: 'Entrez votre nom d\'utilisateur',
@@ -145,7 +150,7 @@ function QuizzCultureG() {
 			if(answers.Q10 == '1 novembre 1993')
 				score++;
 
-			if(score<=3){
+			if(score<=4){
 				console.log("Bof "+answers.username+" ! Tu n'as que "+score+"/10")
 			}
 			else if (score<=7){
@@ -154,8 +159,8 @@ function QuizzCultureG() {
 			else {
 				console.log("Excellent "+answers.username+" ! Tu as "+score+"/10")
 			}
-		})
-	} 
+	})
+} 
 
 
 function QuizzQI () {
@@ -175,12 +180,13 @@ function QuizzQI () {
  			]
  		}, {
  			type: 'checkbox',
- 			message: 'Comment s\'appelle la fille ainée des Simpsons ?',
+ 			message: '6+4=210\n9+2=711\n8+5=313\n5+2=37\n7+6=???',
  			name: 'Q2',
  			choices: [
- 				'Maggie',
- 				'Lisa',
- 				'Rachel'
+ 				'713',
+ 				'113',
+ 				'136',
+ 				'736'
  			]
  		}, {
  			type: 'checkbox',
@@ -265,7 +271,7 @@ function QuizzQI () {
 			var score = 0;
 			if (answers.Q1 == 'Raler')
 				score++;
-			if(answers.Q2 == 'Lisa')
+			if(answers.Q2 == '113')
 				score++;
 			if(answers.Q3 == '5')
 				score++;
@@ -284,7 +290,7 @@ function QuizzQI () {
 			if (answers.Q10 == '4')
 				score++;
 
-			if(score<=3){
+			if(score<=4){
 				console.log("Bof "+answers.username+" ! Tu n'as que "+score+"/10")
 			}
 			else if (score<=7){
@@ -293,8 +299,144 @@ function QuizzQI () {
 			else {
 				console.log("Excellent "+answers.username+" ! Tu as "+score+"/10")
 			}
-		})
-	}
+	})
+}
+
+
+function QuizzCapitale() {
+	inquirer.prompt([
+		{
+			type: 'input',
+			message: 'Entrez votre nom d\'utilisateur',
+			name: 'username'
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la capitale de la Thailande ?',
+			name: 'Q1',
+			choices: [
+			'Bangui',
+			'Bangkok',
+			'Ankara'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la capitale de la Colombie ?',
+			name: 'Q2',
+			choices: [
+			'Hanoi',
+			'Lima',
+			'Bogota'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la capitale de la Finlande ?',
+			name: 'Q3',
+			choices: [
+			'Copenhague',
+			'Helsinki',
+			'Stockholm'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la capitale de la Suisse ?',
+			name: 'Q4',
+			choices: [
+			'Berne',
+			'Berlin',
+			'Vienne'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la capitale de la Jamaique ?',
+			name: 'Q5',
+			choices: [
+			'Kingston',
+			'Quito',
+			'Dakar'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la capitale de la Bolivie ?',
+			name: 'Q6',
+			choices: [
+			'La Havane',
+			'San José',
+			'La Paz'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la capitale de la Chine ?',
+			name: 'Q7',
+			choices: [
+			'Tokyo',
+			'Pékin',
+			'Shanghai'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la capitale de l\'Inde ?',
+			name: 'Q8',
+			choices: [
+			'Islamabad',
+			'Bombay',
+			'New Delhi'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la capitale de la Pologne ?',
+			name: 'Q9',
+			choices: [
+			'Varsovie',
+			'Kiev',
+			'Sofia'
+			]
+		}, {
+			type: 'checkbox',
+			message: 'Quelle est la capitale du Syrie ?',
+			name: 'Q10',
+			choices: [
+			'Kaboul',
+			'Damas',
+			'Jerusalem'
+			]
+		}
+		]).then((answers) => {
+			var titre = 'QuizzCapitale';
+			var score = 0;
+			if (answers.Q1 == 'Bangkok')
+				score++;
+			if(answers.Q2 == 'Bogota')
+				score++;
+			if(answers.Q3 == 'Helsinki')
+				score++;
+			if (answers.Q4 == 'Berne')
+				score++;
+			if(answers.Q5 == 'Kingston')
+				score++;
+			if(answers.Q6 == 'La Paz')
+				score++;
+			if (answers.Q7 == 'Pékin')
+				score++;
+			if(answers.Q8 == 'New Delhi')
+				score++;
+			if(answers.Q9 == 'Varsovie')
+				score++;
+			if(answers.Q10 == 'Damas')
+				score++;
+
+			if(score<=4){
+				console.log("Bof "+answers.username+" ! Tu n'as que "+score+"/10")
+			}
+			else if (score<=7){
+				console.log("Pas mal "+answers.username+" ! Tu as "+score+"/10")
+			}
+			else {
+				console.log("Excellent "+answers.username+" ! Tu as "+score+"/10")
+			}
+	})
+}
+
+
 
 
 db.open('quizz.db').then(() => {
@@ -307,31 +449,43 @@ http.createServer((req, res) => {
 
 	res.write(`
 	 <html>
+	 	<head>
+	        <meta charset="utf-8" />
+	        <style>
+		 		body 
+		 		{
+		 			background-image: url('http://cvincent61.free.fr/fond/fond-site.jpg');
+		 		}
+		 	</style>  
+	        <title>Quizz</title>
+    	</head>
  		<body>
-			 <h1>Quizz</h1>
-	 	</body>
-	 </html>`)
+			 <h1>Score des quizz : </h1>
+ 	`)
 
 	req.on('end', () => {
 		today = new Date()
 		maDate = today.toISOString().replace(/T/, ' ').replace(/\..+/, '')
 		insert(answers)
-		afficher(res)
+		afficher()
 	})
 
 	function insert(answers) {
 		db.run("INSERT INTO comments VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", answers.titre, answers.username, answers.Q1, answers.Q2, answers.Q3, answers.Q4, answers.Q5, answers.Q6, answers.Q7, answers.Q8, answers.Q9, answers.Q10, answers.score, maDate)
 	}
 
-	function afficher(res) {
+	function afficher() {
 		return db.all("SELECT * FROM quizz").then((result)=>{
 			var infotab = ''
 			result.forEach(function(index){
-				infotab += "<p>" + index.titre + " : " + index.username + " le " + maDate + " a eu un score de " + index.score + "</p>"
+				infotab += "<p>" + index.titre + " : " + index.username + " le " + maDate + " a eu un score de " + index.score + "/10 </p>"
 			})
 			return infotab
-		}).then((mavar)=> {
-			res.write(mavar)
+		}).then((infotab)=> {
+			console.log(infotab)
+			res.write(infotab)
+			res.write(`Etzet</body>
+	 </html>`)
 			res.end()
 		})
 	}
