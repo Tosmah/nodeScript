@@ -256,7 +256,7 @@ function QuizzQI () {
  			message: 'FAUSSEFOURRURE est au n°12344516377375 comme le n°123442875 est au mot :',
  			name: 'Q9',
  			choices: [
- 				'fauteil',
+ 				'fauteuil',
  				'fantaisie',
  				'faussaire',
  				'arnaque'
@@ -469,6 +469,11 @@ http.createServer((req, res) => {
 		 		{
 		 			background-image: url('http://cvincent61.free.fr/fond/fond-site.jpg');
 		 		}
+
+		 		h1
+		 		{
+		 			color: red;
+		 		}
 		 	</style>  
 	        <title>Quizz</title>
     	</head>
@@ -479,17 +484,17 @@ http.createServer((req, res) => {
 	afficher()
 
 	function afficher() {
-		return db.all("SELECT * FROM quizz ORDER BY score").then((result)=>{
+		return db.all("SELECT * FROM quizz ORDER BY titre, score DESC").then((result)=>{
 			var infotab = ''
 			result.forEach(function(index){
-				infotab += "<p>" + index.titre + " : " + index.username + " le " + index.date + " a eu un score de " + index.score + "/10 </p>"
+				infotab += "<p>" + index.titre + " : " + index.username + " le \'" + index.date + "\' a eu un score de " + index.score + "/10 </p>"
 			})
 			return infotab
 		}).then((infotab)=> {
 			res.write(infotab)
 			res.write(`</body>
 	 </html>`)
-			res.end()
+			res.end();
 		})
 	}
 
