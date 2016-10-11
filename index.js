@@ -15,7 +15,8 @@ db.open('quizz.db').then(() => {
  .option('-q, --QI', 'Faire le Test de QI')
  .option('-g, --Culture', 'Faire le Test de Culture Général')
  .option('-c, --Capitale', 'Faire le Test des Capitales')
- .option('-s, --Save', 'Sauvegarder les scores')
+ .option('-s, --Save', 'Sauvegarder les scores au format txt')
+ .option('-e, --Excel', 'Sauvegarder les scores au format excel (csv)')
 
 program.parse(process.argv)
 
@@ -30,18 +31,21 @@ function runQuizzes(program){
 		QuizzCapitale()
 	}
 	else if (program.Save){
-		Save()
+		Savetxt()
+	}
+	else if (program.Excel){
+		Savecsv()
 	}
 	else {
 		program.help()
 	}
 }
 
-function Save() {
+function Savetxt() {
 	inquirer.prompt([
 	{
         type: 'checkbox',
-        message: 'Voulez vous sauvegarder les scores sur votre ordinateur ?',
+        message: 'Voulez vous sauvegarder les scores au format .txt sur votre ordinateur ?',
         name: 'Save',
         choices : [
             'Oui',
@@ -68,6 +72,40 @@ function Save() {
 		}
 	})
 }
+
+
+function Savecsv() {
+	inquirer.prompt([
+	{
+        type: 'checkbox',
+        message: 'Voulez vous sauvegarder les scores au format .csv sur votre ordinateur ?',
+        name: 'Save',
+        choices : [
+            'Oui',
+            'Non'
+        ]
+	}
+	]).then((response) => {
+	    if (response.Save == "Oui") {
+	    	db.all("SELECT * FROM quizz ORDER BY titre, score DESC").then((result)=>{
+	    		try {
+		            fs.writeFile('scores.csv', ';', (err) => {
+		                if (err) throw err
+		            })
+		            result.forEach(function(index){
+		            	fs.appendFile('scores.csv',"\"" index.titre + "\";\"" + index.username + "\";\"" + index.date + "\";\"" + index.score + "/10\"; \n\n", (err) => {
+		            		if (err) throw err
+		            	})
+					})
+					console.log('Fichier écrit')
+		        } catch (err) {
+		            console.error('ERR > ', err)
+		        }
+			})
+		}
+	})
+}
+
 
 function QuizzCultureG() {
 	inquirer.prompt([
