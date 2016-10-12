@@ -10,13 +10,13 @@ db.open('quizz.db').then(() => {
 	return db.run("CREATE TABLE IF NOT EXISTS quizz (titre, username, Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, score, date)") 
 })
 
- program
- .version('1.0.0')
- .option('-q, --QI', 'Faire le Test de QI')
- .option('-g, --Culture', 'Faire le Test de Culture Général')
- .option('-c, --Capitale', 'Faire le Test des Capitales')
- .option('-s, --Save', 'Sauvegarder les scores au format txt')
- .option('-e, --Excel', 'Sauvegarder les scores au format excel (csv)')
+program
+.version('1.0.0')
+.option('-q, --QI', 'Faire le Test de QI')
+.option('-g, --Culture', 'Faire le Test de Culture Général')
+.option('-c, --Capitale', 'Faire le Test des Capitales')
+.option('-s, --Save', 'Sauvegarder les scores au format txt')
+.option('-e, --Excel', 'Sauvegarder les scores au format excel (csv)')
 
 program.parse(process.argv)
 
@@ -89,11 +89,11 @@ function Savecsv() {
 	    if (response.Save == "Oui") {
 	    	db.all("SELECT * FROM quizz ORDER BY titre, score DESC").then((result)=>{
 	    		try {
-		            fs.writeFile('scores.csv', ';', (err) => {
+		            fs.writeFile('scores.csv', '\"Tableau des scores :\"; \n\n', (err) => {
 		                if (err) throw err
 		            })
 		            result.forEach(function(index){
-		            	fs.appendFile('scores.csv',"\"" index.titre + "\";\"" + index.username + "\";\"" + index.date + "\";\"" + index.score + "/10\"; \n\n", (err) => {
+		            	fs.appendFile('scores.csv', index.titre + ";" + index.username + ";" + index.date + ";" + index.score + " sur 10; \n\n", (err) => {
 		            		if (err) throw err
 		            	})
 					})
